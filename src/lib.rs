@@ -30,7 +30,7 @@
 //! ```
 pub mod errors;
 
-use once_cell::sync::{Lazy, OnceCell};
+use once_cell::sync::{OnceCell};
 use reqwest::redirect::Policy;
 use unicase::Ascii;
 use warp::filters::path::FullPath;
@@ -209,18 +209,16 @@ fn remove_relative_path(uri: &FullPath, base_path: String, proxy_address: String
 ///
 /// Headers are checked using unicase to avoid case misfunctions
 fn is_hop_header(header_name: &str) -> bool {
-    static HOP_HEADERS: Lazy<Vec<Ascii<&'static str>>> = Lazy::new(|| {
-        vec![
-            Ascii::new("Connection"),
-            Ascii::new("Keep-Alive"),
-            Ascii::new("Proxy-Authenticate"),
-            Ascii::new("Proxy-Authorization"),
-            Ascii::new("Te"),
-            Ascii::new("Trailers"),
-            Ascii::new("Transfer-Encoding"),
-            Ascii::new("Upgrade"),
-        ]
-    });
+    const HOP_HEADERS: [Ascii<&str>; 8] = [
+        Ascii::new("Connection"),
+        Ascii::new("Keep-Alive"),
+        Ascii::new("Proxy-Authenticate"),
+        Ascii::new("Proxy-Authorization"),
+        Ascii::new("Te"),
+        Ascii::new("Trailers"),
+        Ascii::new("Transfer-Encoding"),
+        Ascii::new("Upgrade"),
+    ];
 
     HOP_HEADERS.iter().any(|h| h == &header_name)
 }
